@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace Snake_Gaem
 {
@@ -40,12 +41,29 @@ namespace Snake_Gaem
         private readonly Image[,] gridImages;
         private GameState gameState;
         private bool gameRunning;
+        private int highScore = 0;
 
         public MainWindow()
         {
             InitializeComponent();
+
             gridImages = SetupGrid();
             gameState = new GameState(rows, cols);
+            string fileName = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "highscore.txt");
+            if (File.Exists(fileName))
+            {
+                StreamReader sr = new StreamReader(fileName);
+                highScore = int.Parse(sr.ReadLine());
+                sr.Close();
+                HighScoreText.Text = $"High Score: {highScore}";
+            }
+            else
+            {
+                StreamWriter sw = new StreamWriter(fileName);
+                sw.WriteLine(highScore);
+                sw.Close();
+            }
+         
         }
         private async Task RunGame()
         {
@@ -185,6 +203,15 @@ namespace Snake_Gaem
 
         private async Task ShowGameOver()
         {
+            if (gameState.Score > highScore)
+            {
+                highScore = gameState.Score;
+                StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\highscore.txt");
+                sw.WriteLine(highScore);
+                sw.Close();
+            }
+
+            HighScoreText.Text = $"High Score: {highScore}";
             await DrawDeadSnake();
             await Task.Delay(1000);
             Overlay.Visibility = Visibility.Visible;

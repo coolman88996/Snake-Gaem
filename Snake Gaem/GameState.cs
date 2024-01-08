@@ -64,9 +64,11 @@ namespace Snake_Gaem
             {
                 return;
             }
-
-            Position pos = empty[random.Next(empty.Count)];
-            Grid[pos.Row, pos.Col] = GridValue.Food;
+            for (int i = 0; i < 1; i++ )
+            {
+                Position pos = empty[random.Next(empty.Count)];
+                Grid[pos.Row, pos.Col] = GridValue.Food;
+            }
         }
 
         public Position HeadPosition()
